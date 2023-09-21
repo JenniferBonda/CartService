@@ -1,0 +1,37 @@
+import requests
+
+#set up variable to product service url
+#render shows it
+#gonna replace the url now with the deployed url
+
+def get_all_products():
+    response = requests.get('http://127.0.0.1:5000/products')
+    data = response.json()
+    return data
+
+def get_product(product_id):
+    response = requests.get(f'http://127.0.0.1:5000/products/{product_id}')
+    data = response.json()
+    return data
+
+def create_product(name):
+    new_product = {"name": name}
+    response = requests.post('http://127.0.0.1:5000/products', json=new_product)
+    data = response.json()
+    return data
+
+
+if __name__ == '__main__':
+    all_products = get_all_products()
+    print("All Products:")
+    print(all_products)
+
+    product_id = 2
+    specific_product = get_product(product_id)
+    print(f"\nProduct {product_id}:")
+    print(specific_product)
+
+    new_product_title = "new product"
+    created_product = create_product(new_product_title)
+    print(f"\nCreated Product:")
+    print(created_product)
