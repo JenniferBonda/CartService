@@ -1,7 +1,7 @@
 #Jennifer Bonda
 import requests
 from flask import Flask, jsonify, request
-app1 = Flask(__name__)
+app = Flask(__name__)
 
 carts = [
     {"user_id": 1, "cart": {}},
@@ -35,18 +35,18 @@ def create_product(name):
     return data
 
 # Endpoint 1: Retrieve contents of user's cart
-@app1.route('/cart/<int:user_id>', methods=['GET'])
+@app.route('/cart/<int:user_id>', methods=['GET'])
 def get_cart(user_id):
     cart = next((cart for cart in carts if cart["user_id"] == user_id), None)
     return jsonify({f"User {user_id}'s Cart": cart})
 
-@app1.route('/products', methods=['GET'])
+@app.route('/products', methods=['GET'])
 def get_products():
     response = requests.get('http://127.0.0.1:5000/products')
     product_data = response.json()
     return jsonify({"products": product_data})
 
-@app1.route('/cart/<int:user_id>/add/<int:product_id>', methods=['POST'])
+@app.route('/cart/<int:user_id>/add/<int:product_id>', methods=['POST'])
 def add_to_cart(user_id, product_id):
 
     response = requests.get('http://127.0.0.1:5000/products')
@@ -105,7 +105,7 @@ def add_to_cart(user_id, product_id):
         return jsonify({"error": "Quantity not given"}), 400
     
 
-@app1.route('/cart/<int:user_id>/remove/<int:product_id>', methods=['POST'])
+@app.route('/cart/<int:user_id>/remove/<int:product_id>', methods=['POST'])
 def remove_from_cart(user_id, product_id):
     
     response = requests.get('http://127.0.0.1:5000/products')
@@ -168,6 +168,6 @@ def remove_from_cart(user_id, product_id):
 
 
 if __name__ == '__main__':
-    app1.run(debug=True, port = 5001)
+    app.run(debug=True)
 
   
