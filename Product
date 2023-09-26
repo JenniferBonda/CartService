@@ -1,0 +1,74 @@
+#Jennifer Bonda
+
+from flask import Flask, jsonify, request
+app = Flask(__name__)
+
+
+products = [
+    {"id": 1, "name": "sponge", "price": 3, "quantity": 15},
+    {"id": 2, "name": "shirt", "price": 15, "quantity": 30},
+    {"id": 3, "name": "chips", "price": 2, "quantity": 5},
+    {"id": 4, "name": "brush", "price": 8, "quantity": 8},
+    {"id": 5, "name": "lotion", "price": 10, "quantity": 13}
+]
+
+# Endpoint 1: Get all products
+@app.route('/products', methods=['GET'])
+def get_products():
+    return jsonify({"products": products})
+
+
+
+# Endpoint 2: Get a specific product by ID
+@app.route('/products/<int:product_id>', methods=['GET'])
+def get_product(product_id):
+    product = next((product for product in products if product["id"] == product_id), None)
+    if product:
+        return jsonify({"product": product})
+    else:
+        return jsonify({"error": "Product not found"}), 404
+
+# Endpoint 3: Create a new product
+@app.route('/products', methods=['POST'])
+def create_product():
+    new_product = {
+        "id": len(products) + 1,
+        "name": request.json.get('name'),
+        "price": request.json.get('price'),
+        "quantity": request.json.get('quantity')
+    }
+
+    products.append(new_product)
+    return jsonify({"message": "Product created", "product": new_product}), 201
+
+@app.route('/products/quantity/<int:product_id>/<int:quantity1>', methods=["PUT"])
+def reduce_stock(product_id, quantity1):
+
+    product = next((p for p in products if p['id'] == product_id), None)
+
+    if product:
+        if product['quantity'] >= quantity1:
+            product['quantity'] -= quantity1
+            return jsonify({"message": f"Stock quantity reduced by {quantity1} for product {product_id}"})
+        else:
+            return jsonify({"error": "Not enough stock of that product"}), 400
+        
+
+@app.route('/products/addbackquantity/<int:product_id>/<int:quantity1>', methods=["PUT"])
+def add_stock(product_id, quantity1):
+
+    product = next((p for p in products if p['id'] == product_id), None)
+
+    if product:
+        product['quantity'] += quantity1
+        return jsonify({"message": f"Stock quantity increased by {quantity1} for product {product_id}"})     
+
+@app.route('/products/nameandprice/<int:product_id>', methods=['GET'])
+def get_product_name_price(product_id):
+    product = next((p for p in products if p["id"] == product_id), None)
+    if product:
+        return jsonify({"name": product["name"], "price": product["price"]})
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
