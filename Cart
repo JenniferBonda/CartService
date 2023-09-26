@@ -167,39 +167,7 @@ def remove_from_cart(user_id, product_id):
     
 
 
-
-
-
-
-
-
-'''
-def get_user_cart(user_id):
-    response = requests.get(f'http://127.0.0.1:5000/cart/{user_id}')
-    data = response.json()
-    return data
-'''
-
 if __name__ == '__main__':
     app1.run(debug=True, port = 5001)
 
-    '''
-    all_products = get_all_products()
-    print("All Products:")
-    print(all_products)
-
-    product_id = 2
-    specific_product = get_product(product_id)
-    print(f"\nProduct {product_id}:")
-    print(specific_product)
-
-    new_product_title = "new product"
-    created_product = create_product(new_product_title)
-    print(f"\nCreated Product:")
-    print(created_product)
-'''
-    #user_id = 1
-    #specific_cart = get_cart(user_id)
-    #print(f"\nUser {user_id}:")
-    #print(specific_cart)
-
+  
