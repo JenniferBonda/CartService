@@ -11,7 +11,7 @@ carts = [
     {"user_id": 5, "cart": {}}
 ]
 
-product_url = 'http://127.0.0.1:5000/products'
+product_url = 'https://productservice-omnh.onrender.com'
 
 def get_products_data():
     response = requests.get(product_url)
@@ -19,18 +19,18 @@ def get_products_data():
     return data
 
 def get_all_products():
-    response = requests.get('http://127.0.0.1:5000/products')
+    response = requests.get(f'{product_url}/products')
     data = response.json()
     return data
 
 def get_product(product_id):
-    response = requests.get(f'http://127.0.0.1:5000/products/{product_id}')
+    response = requests.get(f'{product_url}/products/{product_id}')
     data = response.json()
     return data
 
 def create_product(name):
     new_product = {"name": name}
-    response = requests.post('http://127.0.0.1:5000/products', json=new_product)
+    response = requests.post(f'{product_url}/products', json=new_product)
     data = response.json()
     return data
 
@@ -42,20 +42,20 @@ def get_cart(user_id):
 
 @app.route('/products', methods=['GET'])
 def get_products():
-    response = requests.get('http://127.0.0.1:5000/products')
+    response = requests.get(f'{product_url}/products')
     product_data = response.json()
     return jsonify({"products": product_data})
 
 @app.route('/cart/<int:user_id>/add/<int:product_id>', methods=['POST'])
 def add_to_cart(user_id, product_id):
 
-    response = requests.get('http://127.0.0.1:5000/products')
+    response = requests.get(f'{product_url}/products')
     if 'quantity' in request.json:
         quantity = request.json['quantity']
 
         user_cart = next((cart for cart in carts if cart["user_id"] == user_id), None)
 
-        response = requests.get(f'http://127.0.0.1:5000/products/nameandprice/{product_id}')
+        response = requests.get(f'{product_url}/products/nameandprice/{product_id}')
 
         #Retrieve product name and price
                 
@@ -73,7 +73,7 @@ def add_to_cart(user_id, product_id):
 
                 quantity1 = request.json['quantity']
 
-                response = requests.put(f'http://127.0.0.1:5000/products/quantity/{product_id}/{quantity1}', json={"quantity": quantity})
+                response = requests.put(f'{product_url}/products/quantity/{product_id}/{quantity1}', json={"quantity": quantity})
 
                 if response.status_code == 400:
                     user_cart['cart'][product_name]['quantity'] -= quantity1
@@ -84,7 +84,7 @@ def add_to_cart(user_id, product_id):
         
             elif product_name not in user_cart['cart']:
                 quantity1 = request.json['quantity']
-                response = requests.put(f'http://127.0.0.1:5000/products/quantity/{product_id}/{quantity1}', json={"quantity": quantity})
+                response = requests.put(f'{product_url}/products/quantity/{product_id}/{quantity1}', json={"quantity": quantity})
                 if response.status_code == 400:
                     return jsonify({"message": "Not enough stock to reduce"})
 
@@ -108,13 +108,13 @@ def add_to_cart(user_id, product_id):
 @app.route('/cart/<int:user_id>/remove/<int:product_id>', methods=['POST'])
 def remove_from_cart(user_id, product_id):
     
-    response = requests.get('http://127.0.0.1:5000/products')
+    response = requests.get(f'{product_url}/products')
     if 'quantity' in request.json:
         quantity = request.json['quantity']
 
         user_cart = next((cart for cart in carts if cart["user_id"] == user_id), None)
 
-        response = requests.get(f'http://127.0.0.1:5000/products/nameandprice/{product_id}')
+        response = requests.get(f'{product_url}/products/nameandprice/{product_id}')
 
         #Retrieve product name and price
         data = response.json()
@@ -144,7 +144,7 @@ def remove_from_cart(user_id, product_id):
                 quantity1 = request.json['quantity']
         
 
-                response = requests.put(f'http://127.0.0.1:5000/products/addbackquantity/{product_id}/{quantity1}', json={"quantity": quantity})
+                response = requests.put(f'{product_url}/products/addbackquantity/{product_id}/{quantity1}', json={"quantity": quantity})
                 
                 total_item_price = quantity * product_price
 
